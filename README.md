@@ -1,1 +1,1 @@
-# DSA1101-Diabetes
+Welcome to my Data Science Projects Repository! Within this collection, you'll find a showcase of my proficiency and expertise in the field of data science. Each project serves as a testament to various facets of data analysis, machine learning, and visualization, providing a comprehensive glimpse into my skills and capabilities in this dynamic and evolving domain.
