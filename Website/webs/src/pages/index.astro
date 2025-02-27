@@ -1,0 +1,212 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const featuredProjects = [
+  {
+    title: "Traffic Sign Recognition for Autonomous Vehicles",
+    description: "Deep learning CNN model achieving 99% test accuracy for classifying traffic signs across 23 categories.",
+    image: "/assets/images/project-traffic-sign.jpg",
+    technologies: ["Python", "CNN", "Deep Learning", "LIME"],
+    slug: "traffic-sign-recognition"
+  },
+  {
+    title: "Stack Overflow Sentiment Analysis",
+    description: "Sentiment analysis and demographic segmentation identifying key trends influencing AI adoption.",
+    image: "/assets/images/project-stackoverflow.jpg",
+    technologies: ["Python", "NLP", "Sentiment Analysis", "Data Visualization"],
+    slug: "stackoverflow-sentiment"
+  },
+  {
+    title: "NUS Datathon Competition 2024",
+    description: "Led a team to develop a multivariate predictive sales model using advanced feature engineering.",
+    image: "/assets/images/project-datathon.jpg",
+    technologies: ["Python", "Gradient Boosting", "Feature Engineering", "Sales Forecasting"],
+    slug: "nus-datathon"
+  }
+];
+---
+
+<MainLayout title="Home">
+  <Hero />
+  
+  <!-- About Section Preview -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="section-title text-center mb-12">About Me</h2>
+      
+      <div class="flex flex-col md:flex-row gap-12 items-center">
+        <div class="md:w-1/2">
+          <p class="text-lg mb-6">
+            I'm a Data Science and Analytics undergraduate at the National University of Singapore with a strong foundation in machine learning, statistical analysis, and data visualization.
+          </p>
+          <p class="text-lg mb-6">
+            My experience spans from developing fraud detection models at SkillsFuture Singapore to leading data science projects and competitions. I'm passionate about leveraging data to drive insights and solve complex problems.
+          </p>
+          <div class="mt-8">
+            <a href="/about" class="btn-primary">
+              Learn More About Me
+            </a>
+          </div>
+        </div>
+        
+        <div class="md:w-1/2">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-blue-50 p-6 rounded-lg">
+              <h3 class="font-bold text-lg mb-2 text-blue-600">Data Science</h3>
+              <p>Machine learning, statistical analysis, and predictive modeling</p>
+            </div>
+            <div class="bg-blue-50 p-6 rounded-lg">
+              <h3 class="font-bold text-lg mb-2 text-blue-600">AI & Deep Learning</h3>
+              <p>Neural networks, computer vision, and NLP applications</p>
+            </div>
+            <div class="bg-blue-50 p-6 rounded-lg">
+              <h3 class="font-bold text-lg mb-2 text-blue-600">Data Engineering</h3>
+              <p>ETL processes, data pipelines, and cloud infrastructure</p>
+            </div>
+            <div class="bg-blue-50 p-6 rounded-lg">
+              <h3 class="font-bold text-lg mb-2 text-blue-600">Visualization</h3>
+              <p>Interactive dashboards and meaningful data storytelling</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Featured Projects Section -->
+  <section class="py-16 bg-slate-50">
+    <div class="container mx-auto px-4">
+      <h2 class="section-title text-center mb-2">Featured Projects</h2>
+      <p class="text-center text-slate-600 mb-12">Explore some of my recent data science and analytics work</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {featuredProjects.map(project => (
+          <ProjectCard {...project} />
+        ))}
+      </div>
+      
+      <div class="mt-12 text-center">
+        <a href="/projects" class="btn-primary">
+          View All Projects
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Skills Section -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="section-title text-center mb-12">Technical Skills</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="p-6 rounded-lg bg-blue-50">
+          <h3 class="text-xl font-semibold mb-4 text-blue-600">Programming</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Python
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              R
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              SQL
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Java
+            </li>
+          </ul>
+        </div>
+        
+        <div class="p-6 rounded-lg bg-blue-50">
+          <h3 class="text-xl font-semibold mb-4 text-blue-600">Data Processing</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Pandas
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              NumPy
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Tidyverse
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              MATLAB
+            </li>
+          </ul>
+        </div>
+        
+        <div class="p-6 rounded-lg bg-blue-50">
+          <h3 class="text-xl font-semibold mb-4 text-blue-600">ML & AI</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              TensorFlow
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Scikit-learn
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              OpenCV
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Statistical Modeling
+            </li>
+          </ul>
+        </div>
+        
+        <div class="p-6 rounded-lg bg-blue-50">
+          <h3 class="text-xl font-semibold mb-4 text-blue-600">Tools & Platforms</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              AWS
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Git
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Tableau
+            </li>
+            <li class="flex items-center">
+              <span class="mr-2 text-blue-600">■</span>
+              Jupyter Notebook
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA Section -->
+  <section class="py-16 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold mb-6">Let's Work Together</h2>
+      <p class="text-lg mb-8 max-w-2xl mx-auto">
+        I'm currently available for internships, collaborative projects, and research opportunities in data science and analytics.
+      </p>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <a href="/resume" class="btn-primary bg-white text-blue-600 hover:bg-slate-100">
+          View My Resume
+        </a>
+        <a href="/contact" class="btn-outline border-white text-white hover:bg-blue-700 hover:border-blue-700">
+          Contact Me
+        </a>
+      </div>
+    </div>
+  </section>
+</MainLayout>

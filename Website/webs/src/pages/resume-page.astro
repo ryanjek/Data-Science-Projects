@@ -1,0 +1,286 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import ExperienceCard from '../components/ExperienceCard.astro';
+
+const workExperiences = [
+  {
+    position: "Data Science Intern",
+    company: "SkillsFuture Singapore",
+    period: "May 2024 - Aug 2024",
+    responsibilities: [
+      "Utilized anomaly detection models using autoencoders, clustering, and graph-based techniques, identifying fraudulent patterns across demographics.",
+      "Led comprehensive model health assessments, utilizing statistical tools to evaluate performance, identify data and concept drift.",
+      "Conducted User Acceptance Testing (UAT) on 3 Fraud Analytics Models during cloud migration, ensuring smooth production deployment with zero post-launch issues.",
+      "Streamlined processes through data lineage analysis for 60+ features, enhancing feature engineering efficiency.",
+      "Developed interactive Tableau dashboards to monitor enterprise KPIs for C-suite executives driving strategic decision-making."
+    ]
+  },
+  {
+    position: "Data Science Teaching Assistant",
+    company: "National University of Singapore",
+    period: "Jan 2024 - May 2024",
+    responsibilities: [
+      "Coached over 50 students on key data science concepts such as data cleaning, data visualization, and machine learning models, resulting in a 95% student satisfaction rate."
+    ]
+  },
+  {
+    position: "Military Training Instructor",
+    company: "Singapore Armed Forces",
+    period: "Nov 2022 - Apr 2023",
+    responsibilities: [
+      "Responsible for designing and delivering high-quality instructional programs for over 100 cadets.",
+      "Utilised data-driven decision-making by analysing training data, leading to a 30% improvement in training effectiveness."
+    ]
+  },
+  {
+    position: "Operation and Intelligence Officer",
+    company: "Singapore Armed Forces",
+    period: "Jan 2021 - Nov 2022",
+    responsibilities: [
+      "Coordinated cross-divisional assets planning and managed operations.",
+      "Recognised for exceptional leadership and service with multiple honours including NSF of the Year Award, Letter of Commendation, Signal Brigade Commander Coin, and invitation to Presidential Garden Reception."
+    ]
+  }
+];
+
+const projects = [
+  {
+    title: "Traffic Sign Recognition for Autonomous Vehicles",
+    period: "Oct 2024",
+    description: "Leveraged on Deep Learning framework to develop and fine-tuned a Convolutional Neural Network (CNN) to classify traffic signs across 23 categories, achieving 99% test accuracy. Enhanced model reliability through advanced feature preprocessing, data augmentation, hyperparameter tuning, and LIME-based feature interpretability."
+  },
+  {
+    title: "Stack Overflow Sentiment Analysis",
+    period: "Oct 2024",
+    description: "Conducted sentiment analysis and demographic segmentation identifying key trends influencing AI adoption across demographic groups. Presented insights through visualisation tools illustrating sentiment distributions and correlations among demographics."
+  },
+  {
+    title: "National University of Singapore Datathon Competition 2024",
+    period: "Feb 2024",
+    description: "Led a team of 5 to develop a multivariate predictive sales model leveraging feature engineering, and gradient boosting techniques to analyse historical sales data to forecast future sales figures."
+  },
+  {
+    title: "Predictive Health Analytics",
+    period: "Nov 2023",
+    description: "Developed and fine-tuned supervised learning models (e.g., logistic regression, random forests) for diabetic status prediction, achieving an accuracy rate of 75%."
+  },
+  {
+    title: "NUS Statistics and Data Science Society's Competition",
+    period: "Sept 2023",
+    description: "Conducted statistical analysis and visualisation using Python libraries (e.g., pandas, matplotlib) to explore correlations and patterns in sleep behaviour."
+  }
+];
+
+const certifications = [
+  { name: "AWS Certified Cloud Practitioner", issuer: "Amazon Web Services", date: "June 2024" },
+  { name: "Intermediate SQL", issuer: "DataCamp", date: "May 2024" },
+  { name: "Creating Dashboards in Tableau", issuer: "DataCamp", date: "May 2024" },
+  { name: "Exploratory Data Analysis in R", issuer: "DataCamp", date: "May 2024" }
+];
+
+const awards = [
+  { name: "NSF of the Year Award", issuer: "Singapore Armed Forces", year: "2023" },
+  { name: "Letter of Commendation from Chief Signal Officer", issuer: "Singapore Armed Forces", year: "2023" },
+  { name: "Signal Brigade Commander Coin", issuer: "Singapore Armed Forces", year: "2023" },
+  { name: "CDC-CC Education Merit Award", issuer: "", year: "2020" },
+  { name: "Commendation Award", issuer: "", year: "2020" },
+  { name: "Education Save Academic Achievement Award", issuer: "", year: "2019" },
+  { name: "Educational Good Progress Award", issuer: "", year: "2018" },
+  { name: "Honourable Mention, Merit Award for Singapore Junior Physics Olympiad", issuer: "", year: "2017" },
+  { name: "Certificate of Credit for Australian Mathematics Competition", issuer: "", year: "2015" }
+];
+
+const skills = {
+  programming: ["Python", "R", "SQL", "Java"],
+  dataTools: ["Pandas", "NumPy", "Matplotlib", "Tidyverse", "Tableau"],
+  ml: ["TensorFlow", "Scikit-learn", "OpenCV"],
+  other: ["MATLAB", "AWS", "Git", "Jupyter Notebook", "Jira"]
+};
+---
+
+<MainLayout title="Resume">
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <!-- Resume Header -->
+        <div class="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">Ryan Ng Jek Hian</h1>
+            <p class="text-xl text-blue-600 mb-4">Data Science & Analytics Professional</p>
+            <div class="flex flex-wrap gap-4 text-slate-600">
+              <span class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                +65 96740664
+              </span>
+              <span class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                ryanngjekhian@gmail.com
+              </span>
+              <span class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+                linkedin.com/in/ryan-ng-jek-hian
+              </span>
+            </div>
+          </div>
+          <div class="mt-6 md:mt-0">
+            <a href="/resume.pdf" download class="btn-primary inline-flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download Resume
+            </a>
+          </div>
+        </div>
+        
+        <!-- Education Section -->
+        <div class="mb-12">
+          <h2 class="section-title">Education</h2>
+          
+          <div class="bg-blue-50 p-6 rounded-lg">
+            <div class="flex flex-col md:flex-row justify-between md:items-center mb-4">
+              <h3 class="text-xl font-semibold">National University of Singapore</h3>
+              <span class="text-slate-600">Aug 2023 - Present</span>
+            </div>
+            <p class="font-medium text-blue-600 mb-4">Bachelor of Science (Honours) in Data Science and Analytics</p>
+            <ul class="space-y-2 text-slate-700">
+              <li class="flex items-start">
+                <span class="mr-2 text-blue-600">•</span>
+                <span>Minor in Quantitative Finance</span>
+              </li>
+              <li class="flex items-start">
+                <span class="mr-2 text-blue-600">•</span>
+                <span>GPA: 4.65/5.00 (Honours with Highest Distinction)</span>
+              </li>
+              <li class="flex items-start">
+                <span class="mr-2 text-blue-600">•</span>
+                <span>Relevant Coursework: Programming Methodology, Data Science, Artificial Intelligence, Data Structure & Algorithms, Data Visualization, Regression Analysis, Probability, Statistics</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Technical Skills Section -->
+        <div class="mb-12">
+          <h2 class="section-title">Technical Skills</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h3 class="text-lg font-semibold mb-3">Programming Languages</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.programming.map(skill => (
+                  <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h3 class="text-lg font-semibold mb-3">Data Manipulation & Visualization</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.dataTools.map(skill => (
+                  <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h3 class="text-lg font-semibold mb-3">Machine Learning Frameworks</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.ml.map(skill => (
+                  <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h3 class="text-lg font-semibold mb-3">Other Tools & Platforms</h3>
+              <div class="flex flex-wrap gap-2">
+                {skills.other.map(skill => (
+                  <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Work Experience Section -->
+        <div class="mb-12">
+          <h2 class="section-title">Work Experience</h2>
+          
+          <div class="space-y-6">
+            {workExperiences.map(experience => (
+              <ExperienceCard {...experience} />
+            ))}
+          </div>
+        </div>
+        
+        <!-- Projects Section -->
+        <div class="mb-12">
+          <h2 class="section-title">Projects</h2>
+          
+          <div class="space-y-6">
+            {projects.map(project => (
+              <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between md:items-center mb-2">
+                  <h3 class="text-lg font-semibold text-blue-600">{project.title}</h3>
+                  <span class="text-slate-600 text-sm">{project.period}</span>
+                </div>
+                <p class="text-slate-700">{project.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <!-- Certifications Section -->
+        <div class="mb-12">
+          <h2 class="section-title">Certifications</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {certifications.map(cert => (
+              <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                <h3 class="font-semibold text-blue-600">{cert.name}</h3>
+                <div class="flex justify-between text-sm text-slate-600 mt-1">
+                  <span>{cert.issuer}</span>
+                  <span>{cert.date}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <!-- Awards Section -->
+        <div>
+          <h2 class="section-title">Awards & Achievements</h2>
+          
+          <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+            <ul class="space-y-3">
+              {awards.map(award => (
+                <li class="flex items-start">
+                  <span class="mr-2 text-blue-600">•</span>
+                  <div>
+                    <span class="font-medium">{award.name}</span>
+                    {award.issuer && <span class="text-slate-600"> ({award.issuer})</span>}
+                    <span class="text-slate-600">, {award.year}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</MainLayout>

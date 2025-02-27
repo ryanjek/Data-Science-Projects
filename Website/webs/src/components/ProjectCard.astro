@@ -1,0 +1,41 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  slug: string;
+}
+
+const { title, description, image, technologies, slug } = Astro.props;
+---
+
+<div class="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl">
+  <div class="h-48 overflow-hidden">
+    <img 
+      src={image} 
+      alt={title} 
+      class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+      onerror="this.src='https://via.placeholder.com/600x400?text=Project+Image';this.onerror='';"
+    />
+  </div>
+  <div class="p-6">
+    <h3 class="text-xl font-bold mb-2 text-slate-800">{title}</h3>
+    <p class="text-slate-600 mb-4">{description}</p>
+    
+    <div class="flex flex-wrap gap-2 mb-4">
+      {technologies.map(tech => (
+        <span class="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded-full">
+          {tech}
+        </span>
+      ))}
+    </div>
+    
+    <a href={`/project/${slug}`} class="text-blue-600 font-medium hover:text-blue-800 inline-flex items-center">
+      View Project
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </a>
+  </div>
+</div>

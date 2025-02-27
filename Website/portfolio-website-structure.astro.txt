@@ -1,0 +1,38 @@
+portfolio-website/
+├── public/
+│   ├── assets/
+│   │   ├── images/
+│   │   │   ├── profile-photo.png
+│   │   │   ├── project-traffic-sign.jpg
+│   │   │   ├── project-stackoverflow.jpg
+│   │   │   ├── project-datathon.jpg
+│   │   │   ├── project-health.jpg
+│   │   │   └── project-sleep.jpg
+│   ├── resume.pdf
+│   └── favicon.svg
+├── src/
+│   ├── components/
+│   │   ├── Header.astro
+│   │   ├── Footer.astro
+│   │   ├── ProjectCard.astro
+│   │   ├── ExperienceCard.astro
+│   │   ├── Hero.astro
+│   │   └── ContactForm.astro
+│   ├── layouts/
+│   │   └── MainLayout.astro
+│   └── pages/
+│       ├── index.astro
+│       ├── about.astro
+│       ├── resume.astro
+│       ├── projects.astro
+│       ├── project/
+│       │   ├── traffic-sign-recognition.astro
+│       │   ├── stackoverflow-sentiment.astro
+│       │   ├── nus-datathon.astro
+│       │   ├── health-analytics.astro
+│       │   └── sleep-analysis.astro
+│       └── contact.astro
+├── astro.config.mjs
+├── package.json
+├── tailwind.config.cjs
+└── tsconfig.json

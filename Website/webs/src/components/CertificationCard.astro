@@ -1,0 +1,24 @@
+---
+export interface Props {
+  title: string;
+  date: string;
+  issuer?: string;
+  url?: string;
+}
+
+const { title, date, issuer = "", url = "#" } = Astro.props;
+---
+
+<div class="bg-white p-5 rounded-lg shadow-sm border border-slate-100 transition-all duration-300 hover:shadow-md">
+  <h3 class="font-semibold text-lg text-slate-800">{title}</h3>
+  {issuer && <p class="text-slate-600 mt-1">{issuer}</p>}
+  <div class="flex justify-between items-center mt-3">
+    <span class="text-sm text-slate-500">{date}</span>
+    {url && url !== "#" && (
+      <a href={url} target="_blank" rel="noopener noreferrer" 
+         class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+        View Certificate →
+      </a>
+    )}
+  </div>
+</div>

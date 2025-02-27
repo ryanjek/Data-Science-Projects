@@ -1,0 +1,163 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+const milestones = [
+  {
+    year: "2023 - Present",
+    title: "Data Science & Analytics Undergraduate",
+    description: "Pursuing a Bachelor of Science with Honours at the National University of Singapore."
+  },
+  {
+    year: "2024",
+    title: "Data Science Intern at SkillsFuture Singapore",
+    description: "Developed fraud detection models and led model monitoring initiatives."
+  },
+  {
+    year: "2023 - 2024",
+    title: "Data Science Teaching Assistant",
+    description: "Coached over 50 students with a 95% satisfaction rate at NUS."
+  },
+  {
+    year: "2021 - 2023",
+    title: "Singapore Armed Forces",
+    description: "Served as Military Training Instructor and Operations & Intelligence Officer."
+  }
+];
+---
+
+<MainLayout title="About Me">
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <h1 class="text-3xl md:text-4xl font-bold mb-8 text-center">About Me</h1>
+      
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-blue-50 p-8 rounded-lg mb-12">
+          <div class="flex flex-col md:flex-row items-center gap-8">
+            <div class="w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-lg">
+              <img 
+                src="/assets/images/profile-photo.png" 
+                alt="Ryan Ng Jek Hian" 
+                class="w-full h-full object-cover"
+                onerror="this.src='https://via.placeholder.com/300?text=Ryan+Ng';this.onerror='';"
+              />
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold mb-2 text-blue-600">Ryan Ng Jek Hian</h2>
+              <p class="text-lg font-medium mb-4">Data Scientist & Analytics Professional</p>
+              <p class="mb-4">
+                I'm a data science student with a passion for using advanced analytics and machine learning to derive meaningful insights from complex datasets.
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <a href="https://www.linkedin.com/in/ryan-ng-jek-hian" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                  </svg>
+                  LinkedIn
+                </a>
+                <a href="mailto:ryanngjekhian@gmail.com" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Email
+                </a>
+                <a href="/resume" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Resume
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- My Story Section -->
+        <div class="mb-16">
+          <h2 class="section-title">My Story</h2>
+          
+          <div class="space-y-6 text-lg">
+            <p>
+              As a Data Science and Analytics undergraduate at the National University of Singapore, I've developed a strong foundation in statistical analysis, machine learning, and data visualization. With a current GPA of 4.65/5.00, I'm on track to graduate with Honours with Highest Distinction.
+            </p>
+            
+            <p>
+              My journey in data science began with a fascination for how data can drive decision-making and innovation. During my internship at SkillsFuture Singapore, I had the opportunity to work on fraud analytics projects, implementing anomaly detection models using advanced techniques like autoencoders and graph-based methods.
+            </p>
+            
+            <p>
+              Prior to my academic pursuit, I served in the Singapore Armed Forces, where I developed strong leadership skills and learned the importance of data-driven decision-making in high-pressure environments. My experience as an Operations and Intelligence Officer taught me how to analyze complex information and translate it into actionable insights.
+            </p>
+            
+            <p>
+              I'm particularly passionate about applying machine learning and AI to solve real-world problems. My projects range from developing traffic sign recognition systems for autonomous vehicles to conducting sentiment analysis for understanding user behavior.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Career Journey Section -->
+        <div class="mb-16">
+          <h2 class="section-title">Career Journey</h2>
+          
+          <div class="relative border-l-2 border-blue-600 pl-8 ml-4">
+            {milestones.map((milestone, index) => (
+              <div class={`mb-10 ${index === milestones.length - 1 ? '' : ''}`}>
+                <div class="absolute w-4 h-4 bg-blue-600 rounded-full -left-2.5 mt-1.5"></div>
+                <div class="text-sm font-bold text-blue-600 mb-1">{milestone.year}</div>
+                <h3 class="text-xl font-semibold mb-2">{milestone.title}</h3>
+                <p class="text-slate-600">{milestone.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <!-- Education Section -->
+        <div class="mb-16">
+          <h2 class="section-title">Education</h2>
+          
+          <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+            <div class="flex flex-col md:flex-row justify-between md:items-center mb-4">
+              <h3 class="text-xl font-semibold">National University of Singapore</h3>
+              <span class="text-slate-600">Aug 2023 - Present</span>
+            </div>
+            <p class="font-medium text-blue-600 mb-4">Bachelor of Science (Honours) in Data Science and Analytics</p>
+            <ul class="space-y-2 text-slate-700">
+              <li class="flex items-start">
+                <span class="mr-2 text-blue-600">•</span>
+                <span>Minor in Quantitative Finance</span>
+              </li>
+              <li class="flex items-start">
+                <span class="mr-2 text-blue-600">•</span>
+                <span>GPA: 4.65/5.00 (Honours with Highest Distinction)</span>
+              </li>
+              <li class="flex items-start">
+                <span class="mr-2 text-blue-600">•</span>
+                <span>Relevant Coursework: Programming Methodology, Data Science, Artificial Intelligence, Data Structure & Algorithms, Data Visualization, Regression Analysis, Probability, Statistics</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- Personal Interests Section -->
+        <div>
+          <h2 class="section-title">Beyond Data Science</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h3 class="text-xl font-semibold mb-4">Photography</h3>
+              <p class="text-slate-600 mb-4">
+                I'm passionate about photography and enjoy capturing moments that tell stories. My interest in visual data extends beyond the digital realm into capturing real-world imagery.
+              </p>
+            </div>
+            
+            <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+              <h3 class="text-xl font-semibold mb-4">Floorball</h3>
+              <p class="text-slate-600 mb-4">
+                As an active floorball player, I value teamwork, strategic thinking, and quick decision-making – skills that also apply to collaborative data science projects and fast-paced analytical environments.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</MainLayout>

@@ -1,0 +1,43 @@
+---
+const skills = [
+  {
+    category: "Programming Languages",
+    items: ["Python", "R", "SQL", "Java"]
+  },
+  {
+    category: "Data Manipulation & Visualisation",
+    items: ["Pandas", "NumPy", "Matplotlib", "Tidyverse", "Tableau"]
+  },
+  {
+    category: "Machine Learning Framework",
+    items: ["TensorFlow", "Scikit-learn", "OpenCV"]
+  },
+  {
+    category: "Statistical Tool",
+    items: ["MATLAB"]
+  },
+  {
+    category: "Cloud Platforms & Technologies",
+    items: ["AWS", "Git", "Jupyter Notebook", "Jira"]
+  }
+];
+---
+
+<section id="skills" class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="section-title text-center mb-12">Technical Skills</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {skills.map(skillGroup => (
+        <div class="bg-slate-50 p-6 rounded-lg shadow-sm border border-slate-100">
+          <h3 class="text-lg font-semibold text-blue-600 mb-3">{skillGroup.category}</h3>
+          <div class="flex flex-wrap gap-2">
+            {skillGroup.items.map(skill => (
+              <span class="px-3 py-1 bg-slate-200 text-slate-700 rounded-full text-sm">{skill}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

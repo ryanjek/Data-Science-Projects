@@ -1,0 +1,47 @@
+---
+import CertificationCard from './CertificationCard.astro';
+
+const certifications = [
+  {
+    title: "AWS Certified Cloud Practitioner",
+    date: "June 2024",
+    issuer: "Amazon Web Services",
+    url: "#"
+  },
+  {
+    title: "DataCamp Intermediate SQL",
+    date: "May 2024",
+    issuer: "DataCamp",
+    url: "#"
+  },
+  {
+    title: "DataCamp Creating Dashboards in Tableau",
+    date: "May 2024",
+    issuer: "DataCamp",
+    url: "#"
+  },
+  {
+    title: "DataCamp Exploratory Data Analysis in R",
+    date: "May 2024",
+    issuer: "DataCamp",
+    url: "#"
+  }
+];
+---
+
+<section id="certifications" class="py-12">
+  <div class="container mx-auto px-4">
+    <h2 class="section-subtitle">Certifications</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {certifications.map(cert => (
+        <CertificationCard
+          title={cert.title}
+          date={cert.date}
+          issuer={cert.issuer}
+          url={cert.url}
+        />
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,6 @@
+openai==1.63.2
+streamlit==1.42.2
+googlemaps==4.10.0
+pillow==11.1.0
+python-dotenv==1.0.1
+requests==2.32.3

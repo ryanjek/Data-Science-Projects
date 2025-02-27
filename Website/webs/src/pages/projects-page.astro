@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/main-layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const projects = [
+  {
+    title: "Traffic Sign Recognition for Autonomous Vehicles",
+    description: "Developed and fine-tuned a Convolutional Neural Network (CNN) to classify traffic signs across 23 categories, achieving 99% test accuracy. Enhanced model reliability through advanced feature preprocessing, data augmentation, hyperparameter tuning, and LIME-based feature interpretability.",
+    tags: ["Deep Learning", "CNN", "Computer Vision", "LIME", "Python"],
+    imageUrl: "/images/traffic-sign-project.jpg",
+    githubUrl: "#",
+    demoUrl: "#",
+    date: "October 2024"
+  },
+  {
+    title: "Stack Overflow Sentiment Analysis",
+    description: "Conducted sentiment analysis and demographic segmentation identifying key trends influencing AI adoption across demographic groups. Presented insights through visualisation tools illustrating sentiment distributions and correlations among demographics.",
+    tags: ["NLP", "Sentiment Analysis", "Data Visualization", "Python", "Pandas"],
+    imageUrl: "/images/sentiment-analysis-project.jpg",
+    githubUrl: "#",
+    demoUrl: "#",
+    date: "October 2024"
+  },
+  {
+    title: "Multivariate Predictive Sales Model",
+    description: "Led a team of 5 to develop a multivariate predictive sales model leveraging feature engineering and gradient boosting techniques to analyse historical sales data to forecast future sales figures. Part of the National University of Singapore Datathon Competition 2024.",
+    tags: ["Predictive Modeling", "Gradient Boosting", "Feature Engineering", "Team Project"],
+    imageUrl: "/images/sales-prediction-project.jpg",
+    githubUrl: "#",
+    date: "February 2024"
+  },
+  {
+    title: "Predictive Health Analytics",
+    description: "Developed and fine-tuned supervised learning models (e.g., logistic regression, random forests) for diabetic status prediction, achieving an accuracy rate of 75%.",
+    tags: ["Machine Learning", "Logistic Regression", "Random Forest", "Healthcare"],
+    imageUrl: "/images/health-analytics-project.jpg",
+    githubUrl: "#",
+    date: "November 2023"
+  },
+  {
+    title: "Sleep Behavior Analysis",
+    description: "Conducted statistical analysis and visualisation using Python libraries (e.g., pandas, matplotlib) to explore correlations and patterns in sleep behaviour. Part of the National University of Singapore Statistics and Data Science Society's Competition.",
+    tags: ["Statistical Analysis", "Data Visualization", "Pandas", "Matplotlib"],
+    imageUrl: "/images/sleep-analysis-project.jpg",
+    githubUrl: "#",
+    date: "September 2023"
+  }
+];
+---
+
+<Layout title="Projects">
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <h1 class="section-title text-center mb-2">My Projects</h1>
+      <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto">
+        A collection of data science and analytics projects showcasing my skills in machine learning, data visualization, and statistical analysis.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {projects.map(project => (
+          <ProjectCard 
+            title={project.title}
+            description={project.description}
+            tags={project.tags}
+            imageUrl={project.imageUrl}
+            githubUrl={project.githubUrl}
+            demoUrl={project.demoUrl}
+            date={project.date}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
