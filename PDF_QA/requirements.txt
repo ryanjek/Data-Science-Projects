@@ -1,0 +1,33 @@
+# Core/ ML Tooling
+numpy==1.26.4
+scikit-learn==1.4.2
+scipy==1.13.0
+pandas==2.2.2
+
+# LLM + HuggingFace + LangChain
+torch==2.2.2
+transformers==4.39.3
+sentence-transformers==2.6.1
+langchain==0.1.16
+langchain-community==0.0.33
+langchain-core==0.1.38
+langchain-text-splitters==0.0.1
+langchain-huggingface==0.0.5
+
+# PDF parsing and vector storage
+PyMuPDF==1.23.20
+faiss-cpu==1.7.4
+pypdf==3.17.4
+
+# OpenAI
+openai==1.24.1
+
+# Streamlit UI
+streamlit==1.32.2
+
+# Utilities
+python-dotenv==1.0.1
+tqdm==4.66.2
+
+# Secure embeddings
+accelerate==0.27.2

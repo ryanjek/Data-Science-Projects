@@ -1,0 +1,6 @@
+What is the bias-variance tradeoff?
+How does cross-validation help in model selection?
+What is the intuition behind support vector machine margins?
+What is the role of regularisation in preventing overfitting?
+What is the difference between batch gradient descent and stochastic gradient descent?
+What is backpropagation and how does it compute gradients?
