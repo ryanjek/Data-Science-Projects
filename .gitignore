@@ -1,6 +1,35 @@
-TravelAI/venv/
-venv/
-TravelAI/venv/
-TravelAI/google-cloud-cli-darwin-arm.tar.gz
-venv/
-TravelAI/google-cloud-cli-darwin-arm.tar.gz
+# === Virtual environments ===
+**/venv/
+
+# === Python cache ===
+**/__pycache__/
+*.py[cod]
+
+# === Jupyter and IPython ===
+.ipynb_checkpoints/
+
+# === System files ===
+.DS_Store
+
+# === IDE files ===
+.vscode/
+.Rapp.history/
+
+# === Dotenv and local config ===
+
+**/.env
+
+# === Archives and installers ===
+*.zip
+*.tar.gz
+
+# === Project-specific heavy folders ===
+**/videos/
+**/frames/
+**/Test_submission/
+**/Old_json/
+**/info/
+
+# === Output or generated content ===
+*.log
+
