@@ -1,0 +1,543 @@
+---
+title: "DSA2101 Group Project"
+author: "StackOverflow, 126723"
+date: "2024-11-12"
+output: 
+  html_document:
+    toc: true        
+    toc_depth: 3     
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, 
+                      include = TRUE,
+                      fig.align = "center",  out.width = "80%")
+```
+
+# Introduction
+
+The `SO_response` dataset contains responses collected from the 2024 Stack Overflow Annual Developer Survey. This data is segmented across various categories, including:
+
+- **Developer Demographics**: Background information on developers such as age (`age`), country of residence (`country`), education level (`ed_level`) and other personal traits.
+
+- **Career Profile**: Developers'proffessional background such as years of professional coding experience (`years_code_pro`), job role (`dev_type`) and other work-related factors.
+
+- **Artificial Intelligence (AI) adoption and Sentiments**: Information on AI adoption and developers' perspectives on the integration of AI in their workflows.
+
+The `SO_labels` dataset provides labels for each survey question, offering additional context to interpret the responses.
+
+Our primary goal with these datasets is to answer the question:
+
+> **"What are the factors influencing developers' adoption of Artificial Intelligence (AI) in their workflows?"**
+
+Our approach involves three main analysis:
+
+1. **Geographic Factors**: Exploring how AI adoption varies by geographic location.
+2. **Demographic Factors**: Exploring how developers'characteristics such as age, education level, and coding experience influence AI adoption.
+3. **Psychological Factors**: Exploring the relationship between developers' sentiments toward AI and their likelihood of adopting AI.
+
+By examining correlations between these factors and AI adoption, we aim to identify underlying patterns that may influence developers' attitudes toward integrating AI into their workflows. Through a holistic view of the various factors: geographical, demographic, and emotional, that may shape AI adoption within the developer community.
+
+### Relevant library & Data importation
+```{r}
+library(tidyverse)
+library(ggthemes)
+library(patchwork)
+library(cowplot)
+library(countrycode)
+library(treemapify)
+library(knitr)
+
+SO_labels <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-09-03/qname_levels_single_response_crosswalk.csv', show_col_types = FALSE)
+SO_questions <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-09-03/stackoverflow_survey_questions.csv', show_col_types = FALSE)
+SO_response <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-09-03/stackoverflow_survey_single_response.csv', show_col_types = FALSE)
+```
+
+# Data Cleaning/ Summary
+```{r}
+# Selecting relevant columns and renaming them for readability
+
+relevant_col = c("response_id", "age", "ed_level", "years_code_pro" , "dev_type" , "country","ai_select","ai_sent","ai_threat","converted_comp_yearly")
+
+cleaned_df <- SO_response %>%
+  select(all_of(relevant_col)) %>%
+  na.omit() %>%
+    rename(
+    ResponseID = response_id,
+    AgeGroup = age,
+    EducationLevel = ed_level,
+    YearsCodedProfessionally = years_code_pro,
+    DeveloperType = dev_type,
+    Country = country,
+    AIAdoption = ai_select,
+    Sentiment = ai_sent,
+    ThreatPerception = ai_threat,
+    ConvertedCompYearly = converted_comp_yearly
+  )
+```
+A vector `relevant_col` is created to list the columns to be kept within the cleaned dataset. These specific columns are selected because we believe that they contain essential information on respondents' demographics and AI-related sentiments, which could prove useful in answering our question. We then filter these columns from our dataset and remove any rows with missing values.
+
+Next, we rename the columns to improve readability. For example, response_id is renamed to `ResponseID`, `age` is renamed to `AgeGroup`, `ed_level` is renamed to `EducationLevel` and so on. These new names, as seen above, make the dataset easier to interpret by providing more descriptive labels.
+```{r}
+# Filtering labels for each variable 
+dev_type_labels <- SO_labels %>%
+    filter(qname == "dev_type")
+
+age_labels <- SO_labels %>%
+    filter(qname == "age")
+
+ed_level_labels <- SO_labels %>%
+    filter(qname == "ed_level")
+
+# Joining cleaned data with labels
+merged_data <- cleaned_df %>%
+  left_join(dev_type_labels, by = c("DeveloperType" = "level")) %>%
+  left_join(age_labels, by = c("AgeGroup" = "level")) %>%
+  left_join(ed_level_labels, by = c("EducationLevel" = "level"))
+```
+This code above joins the `cleaned_df` dataset with label data from a lookup table called `SO_labels`, enhancing the readability of categorical variables by adding descriptive labels. Firstly, we filter `SO_labels` to create subsets for each of the categorical variables (`dev_type`, `age`, and `ed_level`). This approach narrows down the labels relevant to each variable.
+
+Next, we combine `cleaned_df` with each of the label datasets created earlier to create `merged_data`. The `merged_data` now includes the corresponding descriptive labels from `SO_labels` making it more informative and easier to interpret.
+
+```{r}
+# Data Transformation
+age_levels = c("<18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+")
+yearcode_level = c("0-5", "6-10", "11-20", "21+")
+compensation_level = c("0-200k","200k-400k","400k-600k",">600k")
+  
+  
+merged_clean_data <- merged_data %>%
+  # Mapping labels to columns and selecting relevant ones
+  mutate(
+    AgeGroup = label.y,
+    EducationLevel = label,
+    DeveloperType = label.x) %>%
+  select(ResponseID:ConvertedCompYearly) %>%
+  
+  # Cleaning and categorizing columns
+  mutate(
+    AIAdoption = case_when(AIAdoption %in% c(1, 2) ~ "No", AIAdoption == 3 ~ "Yes"),
+    DeveloperType = ifelse(str_detect(DeveloperType, "Developer"), "Developer", NA_character_),
+    Sentiment = case_when(
+      Sentiment == 1|Sentiment == 5  ~ "Favorable",
+      Sentiment == 3|Sentiment == 6  ~"Unfavorable")) %>%
+  mutate(Sentiment = replace_na(Sentiment, "Neutral")) %>%
+  mutate(ThreatPerception = case_when(
+    ThreatPerception == 3 ~ "Threat",
+    ThreatPerception == 2  ~ "Non-Threat",
+    ThreatPerception == 1  ~ "Unsure")) %>%
+  
+  # Recoding AgeGroup and converting to ordered factor
+  mutate(
+    AgeGroup = case_when(
+      AgeGroup == "Under 18 years old" ~ "<18",
+      AgeGroup == "18-24 years old" ~ "18-24",
+      AgeGroup == "25-34 years old" ~ "25-34",
+      AgeGroup == "35-44 years old" ~ "35-44",
+      AgeGroup == "45-54 years old" ~ "45-54",
+      AgeGroup == "55-64 years old" ~ "55-64",
+      AgeGroup == "65 years or older" ~ "65+"),
+    AgeGroup = factor(AgeGroup, levels = age_levels, ordered = TRUE)) %>%
+  
+  # Creating CodingExperienceGroup based on YearsCodedProfessionally
+  mutate(
+    CodingExperienceGroup = case_when(
+      YearsCodedProfessionally >= 0 & YearsCodedProfessionally <= 5 ~ "0-5",
+      YearsCodedProfessionally >= 6 & YearsCodedProfessionally <= 10 ~ "6-10",
+      YearsCodedProfessionally >= 11 & YearsCodedProfessionally <= 20 ~ "11-20",
+      YearsCodedProfessionally > 20 ~ "21+"),
+    CodingExperienceGroup = factor(CodingExperienceGroup,levels = yearcode_level,ordered = TRUE)) %>%
+  
+  # Creating CompensationGroup based on ConvertedCompYearly
+  mutate(
+    CompensationGroup = case_when(
+      ConvertedCompYearly >= 0 & ConvertedCompYearly <= 200000 ~ "0-200k",
+      ConvertedCompYearly >= 200001 & ConvertedCompYearly <= 400000 ~ "200k-400k",
+      ConvertedCompYearly >= 400001 & ConvertedCompYearly <= 600000 ~ "400k-600k",
+      ConvertedCompYearly > 600000 ~ ">600k"),
+    CompensationGroup = factor(CompensationGroup,levels = compensation_level,ordered = TRUE)) %>%
+  na.omit()
+```
+To prepare the `merged_data` dataset for our analysis of factors influencing AI adoption, we applied a series of transformations to create a cleaned and structured dataset, `merged_clean_data`. 
+
+Key transformations include:
+
+- **AI Adoption**:`AIAdoption` which indicates respondents’ AI usage, was transformed into binary labels: "Yes" for active users and "No" for non-users. Respondents who do not currently use AI, regardless of future intentions, are grouped as "No." This approach ensures that our analysis focuses on respondents who are actively using AI, rather than those who may consider it in the future.
+
+- **Developer Type**: `DeveloperType`  which indicates the job role of respondents, was filtered to include only those roles containing the word "Developer". This decision was made because the dataset includes various job titles while some were more explicitly developer-focused (e.g., "Developer, AI," "Developer, Back-end," "Developer, Full-stack"). Since the scope of our analysis centers on Developers only, we narrowed down to these developer-specific roles to accurately assess the factors influencing AI adoption.
+
+- **Professional Coding Experience**: Initially, `YearsCodedProfessionally` was stored as a continuous variable, making it challenging to analyse against AI adoption. To address this, we recoded it into categories: "0-5", "6-10", "11-20", and "21+", and stored it as a new variable, `CodingExperienceGroup`. This grouping enables us to examine AI adoption trends across distinct experience levels based on professional tenure.
+
+- **Sentiment, Threat Perception, and Age Group**: Variables such as `Sentiment`, `ThreatPerception`, and `AgeGroup` were recoded from numerical values to descriptive labels, making the data more interpretable and suitable for analysis and visualisation.
+
+Additionally, rows with missing values were removed to improve data accuracy, reducing the dataset size from 17,734 to 13,580 entries. These transformations ensure that `merged_clean_data` is well-structured and ready for meaningful analysis of the factors influencing AI adoption among developers.
+
+### Key Summary Statistic
+After cleaning the data, we can now explore the data!
+
+#### Top 5 developer type 
+```{r}
+cleaned_df %>%
+  left_join(dev_type_labels, by = c("DeveloperType" = "level")) %>%
+  mutate(DeveloperType = label) %>%
+  mutate(DeveloperType = ifelse(str_detect(DeveloperType, "Developer"), "Developer", DeveloperType)) %>%
+  group_by(DeveloperType) %>%
+  summarise(Count = n()) %>%
+  slice_max(Count, n = 5) %>%
+  kable()
+```
+After grouping the Developers together, we extracted the top 5 job types in the dataset into the table above. We can conclude that developers has the highest count as such we chose to focus on this specfic group during our visualisation.
+
+#### Top 5 country for AI adoption among developers
+```{r}
+top5country = merged_clean_data %>% filter(AIAdoption == 'Yes')%>%
+  group_by(Country) %>% summarize(AdoptedAI = n()) %>% arrange(desc(AdoptedAI)) %>% head(5)
+
+kable(top5country)
+```
+Based on the table, we can conclude that United States of America has the highest number of respondents adopting AI. Hence, we will further analyse the proportion in Visualisation 1
+
+#### Proportion of AI adoption among developers
+```{r}
+AdoptedAI = merged_clean_data %>% select(AIAdoption) %>% filter(AIAdoption == 'Yes') %>% count()
+DidnotAdoptAI = merged_clean_data %>% select(AIAdoption) %>% filter(AIAdoption == 'No') %>% count()
+pct_adoptedAI <- (AdoptedAI/(AdoptedAI+DidnotAdoptAI)) * 100
+```
+In the 2024 survey, AI tools show a high adoption rate among respondents, with 83.6% incorporating them into their development processes.
+
+#### Proportion of sentiments among developers
+```{r}
+ProAI = merged_clean_data %>% select(Sentiment) %>% filter(Sentiment == 'Favorable') %>% count()
+Total_Repsondent = merged_clean_data %>% count()
+pct_ProAI <- (ProAI/Total_Repsondent) * 100
+
+Non_threat = merged_clean_data %>% select(ThreatPerception) %>% filter(ThreatPerception == 'Non-Threat') %>% count()
+Total_Repsondent = merged_clean_data %>% count()
+pct_no_threat <- (Non_threat/Total_Repsondent) * 100
+```
+However, only 72% of respondents expressed a favorable sentiment toward AI adoption, despite its high adoption rate. Furthermore, only 70% of developers perceive AI as non-threatening to their roles.
+
+Thus, we are interested in analyzing the sentiment for AI Adoption among developers. These sentiments includes `ThreatPerception` and factors that might affect adoption rate namely `AgeGroup`, `EducationLevel`, `YearsCodedProfessionally`& `ConvertedCompYearly`.
+
+Following data transformation, the table below highlights the group with the highest adoption level across each factor.
+
+#### Breakdown of age group among developers
+```{r}
+merged_clean_data %>%
+  group_by(AgeGroup) %>%
+  mutate(count = n()) %>%
+  distinct(AgeGroup, count) %>%
+  arrange(desc(count)) %>%
+  kable()
+```
+The above table shows the distribution of the different age groups of the respondents. From this table, we can see that most of the respondents are from the ages of 25 to 34.
+
+```{r}
+merged_clean_data %>%
+  group_by(CodingExperienceGroup) %>%
+  mutate(count = n()) %>%
+  distinct(CodingExperienceGroup, count) %>%
+  arrange(desc(count)) %>%
+  kable()
+```
+The above table shows the distribution of the years of coding experience of the respondents. From this table, we can see that most of the respondents have 0 to 5 years of coding experience.
+
+```{r}
+merged_clean_data %>%
+  group_by(CompensationGroup) %>%
+  mutate(count = n()) %>%
+  distinct(CompensationGroup, count) %>%
+  arrange(desc(count)) %>%
+  kable()
+```
+The above table shows the distribution of the different levels of annual compensation received by the respondents, in USD. From this table, we can see that most of the respondents receive an annual compensation of 0 to 200000 USD. 
+
+
+```{r}
+highest_agegroup = merged_clean_data %>%
+  group_by(AgeGroup) %>%
+  summarize(Total = sum(AIAdoption == 'Yes') + sum(AIAdoption == 'No'),
+            Adopt = sum(AIAdoption == 'Yes')) %>%
+  mutate(prop = Adopt/Total)
+
+highest_Edulvl = merged_clean_data %>%
+  group_by(EducationLevel) %>%
+  summarize(Total = sum(AIAdoption == 'Yes') + sum(AIAdoption == 'No'),
+            Adopt = sum(AIAdoption == 'Yes')) %>%
+  mutate(prop = Adopt/Total)
+
+highest_Comp = merged_clean_data %>%
+  group_by(CompensationGroup) %>%
+  summarize(Total = sum(AIAdoption == 'Yes') + sum(AIAdoption == 'No'),
+            Adopt = sum(AIAdoption == 'Yes')) %>%
+  mutate(prop = Adopt/Total)
+
+highest_Yrscodedpro = merged_clean_data %>%
+  group_by(CodingExperienceGroup) %>%
+  summarize(Total = sum(AIAdoption == 'Yes') + sum(AIAdoption == 'No'),
+            Adopt = sum(AIAdoption == 'Yes')) %>%
+  mutate(prop = Adopt/Total)
+
+
+Summaryhigh = data.frame(
+  Factors = c('AgeGroup','EducationLevel','CompensationGroup','YearsCodedProfessionally'),
+  HighestAdoption = c('<18','Primary/elementary school','0-200k','0-5' ),
+  PercentageofAIAdoption = c('93.2%','94.1%','83.6%','88.3%'))
+
+kable(Summaryhigh)
+```
+The table indicates that adoption levels are generally highest among junior developers. Therefore, the following visualizations will explore trends in AI adoption across developers of all experience levels.
+
+
+
+# Data Visualisation
+### Tree Map of AI adoption across continents
+```{r}
+# Prepare the data, group by continent and calculate the average AI adoption rate for each continent
+ai_adoption_by_continent <- merged_clean_data %>%
+  group_by(Country) %>%
+  summarise(
+    AIAdoptionRate = mean(AIAdoption == "Yes", na.rm = TRUE),
+    Respondents = n()
+  ) %>%
+  filter(!is.na(AIAdoptionRate))
+
+# Add continent information using the 'countrycode' package
+ai_adoption_by_continent$Continent <- countrycode(ai_adoption_by_continent$Country, "country.name", "continent")
+
+
+# Group by continent and calculate the total number of respondents and average AI adoption rate for each continent
+ai_adoption_by_continent_grouped <- ai_adoption_by_continent %>%
+  group_by(Continent) %>%
+  summarise(
+    TotalRespondents = sum(Respondents, na.rm = TRUE),
+    AvgAIAdoptionRate = mean(AIAdoptionRate, na.rm = TRUE)
+  ) %>%
+  filter(!is.na(AvgAIAdoptionRate) & !is.na(Continent))  # Remove continents with missing AI adoption rates
+
+# Tree map plot
+ggplot(ai_adoption_by_continent_grouped, aes(area = TotalRespondents, fill = AvgAIAdoptionRate, label = Continent)) +
+  geom_treemap() +
+  geom_treemap_text(colour = "darksalmon", size = 10, place = "center") +
+  scale_fill_gradientn(
+    colors = c("lavender", "skyblue", "darkblue"),
+    name = "AI Adoption Proportion"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(title = "AI Adoption by Continent",
+       subtitle = "Tree map of AI Adoption with Continent Size Representing Total Respondents") +
+  theme(legend.position = "bottom")
+```
+The tree map is chosen as it is able to show multiple factors on the same visual whcih is crucial for our analysis where in our case includes the different continents, proportion of AI adoption and number of respondents for the survey.
+
+#### Explanation for Visualisation 1 (Geographical Factor)
+The tree map showcases proportion of AI adoption rates across continents, with each region's size representing the survey respondent counts. This layout allows for an immediate comparison, highlighting the regional differences in AI adoption. Europe, occupying almost half the map, has the largest respondent base, followed by the Americas and other continents, which can be easily visualized in the map. A color gradient further distinguishes adoption rates, which could be influenced by education level, economic resources, or compensation levels. This visualization highlights the global unevenness of AI adoption, influenced by various regional factors. From the map, it's clear that the Americas have the highest proportion of AI adoption compared to other continents. This disparity may be attributed to differences in resources available across regions.
+
+While the tree map highlights trends in the data set, we found out that there were an uneven respondent distribution across continents. For instance, African regions display a high proportion of AI adoption, but this result may be skewed due to the low respondent count, leading to potential misinterpretations of adoption patterns. This uneven distribution calls for cautious interpretation, as smaller sample sizes in certain regions can impact the reliability of the observed adoption rates.
+
+
+### Line Chart of AI adoption across demographics
+```{r}
+# Proportion of AI Adoption across Age Group 
+age_summary <- merged_clean_data %>%
+  group_by(AgeGroup) %>%
+  summarise(Proportion = sum(AIAdoption == "Yes") / n() ) %>%
+  ungroup()
+
+# Plot AI Adoption Proportion by AgeGroup
+age_plot <- ggplot(age_summary, aes(x = AgeGroup, y = Proportion,group = 1)) +
+  geom_line(linewidth = 1, color = "Black") +
+  geom_point(color = "deepskyblue", size =3 ) +
+  labs(title = "AI Adoption by Age Groups", x = "Age Group", y = "Proportion of Adoption") +
+  scale_y_continuous(breaks = seq(0.6, 1, 0.2), limits = c(0.6, 1))+
+  theme_clean()
+```
+
+```{r}
+# Proportion of AI Adoption across Years of Coding Experience
+years_coding_summary <- merged_clean_data %>%
+  group_by(CodingExperienceGroup) %>%
+  summarise(Proportion = sum(AIAdoption == "Yes") / n() ) %>%
+  ungroup()
+
+year_coded_plot <- ggplot(years_coding_summary, aes(x = CodingExperienceGroup, y = Proportion,group = 1)) +
+  geom_line(linewidth = 1, color = "Black") +
+  geom_point(color = "deepskyblue", size =3 ) +
+  labs(title = "AI Adoption by Coding Exp", x = " Years of Coding Experience", y = "Proportion of Adoption") +
+  scale_y_continuous(breaks = seq(0.6, 1, 0.2), limits = c(0.6, 1)) +
+  theme_clean()
+```
+
+```{r}
+# Proportion of AI Adoption across Education Level 
+Edulvl = merged_clean_data %>% group_by(EducationLevel) %>% summarize(Yes = sum(AIAdoption == 'Yes'),No = sum(AIAdoption == 'No')) %>% mutate(prop = Yes/(Yes+No)) %>% slice(-8)
+
+lvl = c('Pri','Sec','Cse','A.A','B.A','M.A','Ph.D')
+
+Edulvl <- Edulvl %>%
+  pivot_wider(names_from = EducationLevel, values_from = prop) %>%
+  rename(
+    `A.A` = "Associate degree (A.A., A.S., etc.)",
+    `B.A` = "Bachelor’s degree (B.A., B.S., B.Eng., etc.)",
+    `M.A` = "Master’s degree (M.A., M.S., M.Eng., MBA, etc.)",
+    `Pri` = "Primary/elementary school",
+    `Ph.D` = "Professional degree (JD, MD, Ph.D, Ed.D, etc.)",
+    `Sec` = "Secondary school (e.g. American high school, German Realschule or Gymnasium, etc.)",
+    `Cse` = "Some college/university study without earning a degree") %>%
+  pivot_longer(3:9, names_to = "EducationLevel", values_to = "prop",
+                      values_drop_na = TRUE) %>%
+  mutate(EducationLevel = factor(EducationLevel, ordered = T, levels = lvl)) %>%
+  arrange(EducationLevel)
+
+
+Education_Level_Plot = ggplot(data = Edulvl) +
+  geom_line(aes(x = EducationLevel, y = prop,group = 1), linewidth = 1, colour = "Black") +
+  geom_point(aes(x = EducationLevel, y = prop),color = "deepskyblue", size =3) +
+  labs(title = "AI Adoption by Edu Lvl",
+       x = "Education Level",
+       y = "Proportion of Adoption")+
+    scale_y_continuous(breaks = seq(0.6, 1, 0.2), limits = c(0.6, 1))+
+    theme_clean()
+```
+
+```{r}
+# Proportion of AI Adoption across Compensation Amount
+compensation_summary <- merged_clean_data %>%
+  group_by(CompensationGroup) %>%
+  summarise(Proportion = sum(AIAdoption == "Yes") / n() ) %>%
+  ungroup()
+
+# Plot AI Adoption Proportion by Compensation
+compensation_plot <- ggplot(compensation_summary, aes(x = CompensationGroup, y = Proportion,group = 1)) +
+  geom_line(linewidth = 1, color = "Black") +
+  geom_point(color = "deepskyblue", size =3) +
+  labs(title = "AI Adoption by Comp", x = " Level of Compensation ", y = "Proportion of Adoption") +
+  scale_y_continuous(breaks = seq(0.6, 1, 0.2), limits = c(0.6, 1)) +
+  theme_clean()
+```
+
+```{r}
+plot_grid(age_plot, year_coded_plot,Education_Level_Plot, compensation_plot,ncol = 2, align = "v")
+```
+
+The line chart was chosen to effectively display trends across the various factors, making it easy to observe shifts in AI adoptions as each specific factor increases.
+
+#### Explanation for Visualisation 2.1 (Age group)
+This line chart visualises the proportion of developers adopting AI across different age groups. 
+From the visualisation, we can observe a downward trend in AI adoption with increasing age. As the age groups progress, adoption rates decrease steadily, with the 65+ age group showing the lowest level of AI adoption. This trend indicates that younger developers are more inclined to integrate AI into their workflows, possibly due to greater familiarity with emerging technologies. Conversely, older developers are slightly more hesitant to adopt AI, potentially due to familiarity, or even skepticism about AI's benefits in their established workflows which we will explore in Visualisation 3.
+
+#### Explanation for Visualisation 2.2 (Years Coding Professionally)
+This line chart illustrates the proportion of developers adopting AI across various levels of professional coding experience. 
+
+Similar to visualisation 2.1, we observe a clear downward trend in AI adoption as years of experience increase. Developers with fewer years of coding experience have higher adoption rates, suggesting that they are more inclined to integrate AI tools into their workflows, possibly to their reliance on AI to supplement their developing skills or to enhance productivity early in their careers. Conversely, more experienced developers are slightly more hesitant to adopt AI as they are more proficient in their profession and does not rely heavily on AI to aid them in their daily tasking. 
+
+#### Explanation for Visualisation 2.3 (Education Level)
+This line chart presents the proportion of developers adopting AI across various Education Level.
+
+Similar to previous visualisations, a downward trend in AI adoption is apparent as education levels increase. Developers with lower educational qualifications are more likely to incorporate AI into their workflows. This could be attributed to a potential gap in technical skills, leading them to rely more on AI solutions to address challenges they face. Conversely, developers with higher educational qualifications tend to have stronger technical and problem-solving abilities, which may reduce their dependence on AI. This pattern suggests that AI adoption could be seen as a tool to complement skill gaps, while more educated developers might prefer to leverage their expertise for problem-solving rather than relying on AI
+
+#### Explanation for Visualisation 2.4 (Compensation Amount)
+This line chart displays the proportion of developers adopting AI with varying Compensation Amount.
+
+There is an overall decline in AI adoption among developers with higher compensation levels, who are less likely to integrate AI into their workflows. Since compensation often correlates with skill level and experience, this trend suggests that more experienced developers may be more hesitant to adopt AI tools. This reluctance could stem from various factors, such as confidence in their established methods, concerns over AI’s reliability in complex scenarios, or the belief that their expertise reduces the need for AI assistance. Additionally, seasoned developers may be more critical of AI's limitations, especially regarding precision and contextual understanding, which they feel are essential for advanced work.
+
+
+### Stacked Barplots of Sentiment & Threat Perception 
+
+
+```{r}
+# Data preparation for the first plot (Sentiment by AI Adoption)
+likert_data <- merged_clean_data %>%
+  count(AIAdoption, Sentiment) %>%
+  group_by(AIAdoption) %>%
+  mutate(Proportion = n / sum(n))
+```
+
+```{r}
+# First barplot: Sentiment Distribution by AI Adoption
+
+# Define custom color palettes
+sentiment_colors <- c("Favorable" = "#66c2a5", "Unfavorable" = "#fc8d62", "Neutral" = "#8da0cb")
+threat_colors <- c("Unsure" = "#8da0cb", "Threat" = "#fc8d62", "Non-Threat" = "#66c2a5")
+
+# First plot: Sentiment Distribution by AI Adoption
+plot1 <- ggplot(likert_data, aes(x = AIAdoption, y = Proportion, fill = Sentiment)) +
+  geom_bar(stat = "identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_manual(values = sentiment_colors) +  # Apply custom colors for Sentiment
+  labs(title = "Sentiment Proportions by AI Adoption",
+       x = "Adopted usage of AI",
+       y = "Proportion",
+       fill = "Sentiment") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 0))
+
+```
+
+```{r}
+# Data preparation for the second barplot (Threat Perception by AI Adoption)
+likert_data2 <- merged_clean_data %>%
+  count(AIAdoption, ThreatPerception) %>%
+  group_by(AIAdoption) %>%
+  mutate(Proportion = n / sum(n))
+```
+
+```{r}
+# Second barplot: AI Threat Perception by AI Adoption
+plot2 <- ggplot(likert_data2, aes(x = AIAdoption, y = Proportion, fill = ThreatPerception)) +
+  geom_bar(stat = "identity", position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_manual(values = threat_colors) +  # Apply custom colors for Threat Perception
+  labs(title = "AI Threat Proportions by AI Adoption",
+       x = "Adopted usage of AI",
+       y = "",
+       fill = "Threat Perception") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 0))
+
+```
+
+```{r}
+# Combine the plots side-by-side
+combined_plot <- plot1 + plot2
+
+# Display the combined plot
+print(combined_plot)
+```
+
+#### Explanations for Visualisation 3
+Stackbar plots allows for insightful analysis by visualizing the distribution and relationship of sentiments and threat perceptions between those who adopt the usage of AI and those who do not. 
+The stackbar plots show the proportion of each category within the different groups of AI Adoption.This helps to compare how various sentiments or perceptions are distributed within each group, making it easy to identify trends across categories.
+
+From the left plot, we can see that respondents who have a more Favorable Sentiment towards AI are more inclined to adopt AI in their workflow. Conversely, those who have less Favorable or more Neutral sentiments towards AI are less likely to adopt it.
+
+However, an interesting observation can be made when looking at the AI threat perception of both groups. We see that both groups have almost the same distribution for the threat of AI. Moreover, most people in both groups currently see AI as a Non-Threat to their careers. This shows that while sentiments towards AI might be different, the perceived threat of AI is still deemed as low by the respondents.
+
+Overall, those with more favorable sentiments towards AI would be more likely to adopt it, which is to be expected. However, from this visualisation, we can also deduce that the perceived threat of artificial intelligence is low among developers, and is likely not a factor in influencing whether they adopt it or not.
+
+# Discussion
+
+Ultimately, our 3 visualisations aimed to answer our initial question: What are the factors influencing the adoption of Artificial Intelligence among Developers?
+
+From the first visualisation, tree map, we can conclude that geographical location is one of the factor influencing AI adoption for developers. With American and European regions having a higher proportion of AI adoption as compared to the other continents with the exception of Africa.
+
+For our second visualisation consists of 4 sub line plots of the proportions of AI adoption across Age, Education Level, Coding Experience and Compensation. From this plot, we can conclude that there are demographic factors that affect the adoption of AI. Respondents who are older, have more education and coding experience, and receive higher compensation, are generally less likely to adopt AI.
+
+Our third and final visualisation, which consists of 2 sets of stacked Bar Plots, focuses on the sentiments and perceptions of respondents towards AI itself, analysing potential psychological factors that could influence the adoption of AI. From our plots, those who have a more favorable sentiment of AI are more receptive to AI and adopt it. However, the perception of AI as a threat to careers is not a factor in influencing AI adoption, as most respondents still do not see AI as a threat. 
+
+Moving forward, we could possibly broaden the scope of our project by looking at numerous other variables that are present within the data set. For instance, we could consider of the comparison of the various organization sizes, which could provide us with an additional dimension of analysis on the adoption of AI among developers.
+
+# References:
+1. AIPRM. (2024). AI in education statistics. AIPRM. https://www.aiprm.com/ai-in-education-statistics/
+2. Artificial Intelligence - Africa: Statista market forecast. Statista. (n.d.). https://www.statista.com/outlook/tmo/artificial-intelligence/africa
+3. Chan, C. K. Y., & Lee, K. K. W. (2023b, November 15). The Ai Generation Gap: Are Gen Z students more interested in adopting generative ai such as chatgpt in teaching and learning than their gen X and millennial generation teachers? - smart learning environments. SpringerOpen. https://slejournal.springeropen.com/articles/10.1186/s40561-023-00269-3 
+4. R for Data Science. (2024). Stack Overflow Annual Developer Survey 2024 [Data set]. TidyTuesday. GitHub. https://github.com/rfordatascience/tidytuesday/blob/master/data/2024/2024-09-03/readme.md
+5. Seth, J. (2024b, July 22). Public Perception of AI: Sentiment and Opportunity. Public perception of AI: Sentiment and opportunity. https://arxiv.org/html/2407.15998v1
+
+# Task Allocation
+1. Ryan Ng Jek Hian: Introduction,Transformation, Summary Statistic, Linechart 2.1, 2.2
+2. Tee Jing Xin: Key Summary Statistic, Linechart 2.3, 2.4
+3. Aung Zar Ni Min: Joining of Data, Stacked Bar Plot, Discussion
+4. Elias Liew Zhi Song: Treemap
